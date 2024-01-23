@@ -11,13 +11,13 @@ services:
   ports:
    - 27017:27017
 
- postgres-db:
-  image: postgres:15.3
-  environment:
-   POSTGRES_USER: postgres
-   POSTGRES_DB: my-db
-   POSTGRES_PASSWORD: 123456
-  volumes:
-   - ./postgres:/var/lib/postgresql/data
-  ports:
-   - 5432:5432
+#  postgres-db:
+#   image: postgres:15.3
+#   environment:
+#    POSTGRES_USER: postgres
+#    POSTGRES_DB: my-db
+#    POSTGRES_PASSWORD: 123456
+#   volumes:
+#    - ./postgres:/var/lib/postgresql/data
+#   ports:
+#    - 5432:5432
