@@ -9,10 +9,11 @@ interface Options {
 
 export class Server {
 	public readonly app = express();
-	private serverListener?: any;
+
 	private readonly port: number;
-	private readonly publicPath: string;
 	private readonly routes: Router;
+	private readonly publicPath: string;
+	private serverListener?: any;
 
 	constructor(options: Options) {
 		const { port, routes, public_path = 'public' } = options;
@@ -22,17 +23,13 @@ export class Server {
 	}
 
 	async start() {
-		//* Middlewares
-		this.app.use(express.json()); // raw
-		this.app.use(express.urlencoded({ extended: true })); // x-www-form-urlencoded
+		this.app.use(express.json());
+		this.app.use(express.urlencoded({ extended: true }));
 
-		//* Public Folder
 		this.app.use(express.static(this.publicPath));
 
-		//* Routes
 		this.app.use(this.routes);
 
-		//* SPA /^\/(?!api).*/  <== Únicamente si no empieza con la palabra api
 		this.app.get('*', (req, res) => {
 			const indexPath = path.join(
 				__dirname + `../../../${this.publicPath}/index.html`
