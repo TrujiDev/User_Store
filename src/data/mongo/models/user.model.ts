@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
 		required: [true, 'Email is required'],
 		unique: true,
 	},
-	ValidatedEmail: {
+	validatedEmail: {
 		type: Boolean,
 		default: false,
 	},
