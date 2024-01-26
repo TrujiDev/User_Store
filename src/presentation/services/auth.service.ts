@@ -1,6 +1,12 @@
+import { log } from 'util';
 import { bcryptAdapter } from '../../config';
 import { UserModel } from '../../data';
-import { CustomError, RegisterUserDto, UserEntity } from '../../domain';
+import {
+	CustomError,
+	RegisterUserDto,
+	UserEntity,
+	LoginUserDto,
+} from '../../domain';
 
 export class AuthService {
 	constructor() {}
@@ -11,10 +17,10 @@ export class AuthService {
 
 		try {
 			const user = new UserModel(registerUserDto);
-            
-            user.password = bcryptAdapter.hash(registerUserDto.password);
-            
-            await user.save();
+
+			user.password = bcryptAdapter.hash(registerUserDto.password);
+
+			await user.save();
 
 			const { password, ...userEntity } = UserEntity.fromObject(user);
 
@@ -22,5 +28,17 @@ export class AuthService {
 		} catch (error) {
 			throw CustomError.internalServer(`${error}`);
 		}
+	}
+
+	public async loginUser(loginUserDto: LoginUserDto) {
+		const user = await UserModel.findOne({ email: loginUserDto.email });
+		if (!user) throw CustomError.badRequest('Invalid credentials');
+
+		const isMatch = bcryptAdapter.compare(loginUserDto.password, user.password);
+		if (!isMatch) throw CustomError.badRequest('Invalid credentials');
+
+		const { password, ...userEntity } = UserEntity.fromObject(user);
+
+		return { user: userEntity, token: 'ABC' };
 	}
 }
