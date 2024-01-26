@@ -1,5 +1,4 @@
-import { log } from 'util';
-import { bcryptAdapter } from '../../config';
+import { JwtAdapter, bcryptAdapter } from '../../config';
 import { UserModel } from '../../data';
 import {
 	CustomError,
@@ -39,6 +38,9 @@ export class AuthService {
 
 		const { password, ...userEntity } = UserEntity.fromObject(user);
 
-		return { user: userEntity, token: 'ABC' };
+		const token = await JwtAdapter.generateToken({ id: user._id });
+		if (!token) throw CustomError.internalServer('Error generating token');
+
+		return { user: userEntity, token };
 	}
 }
