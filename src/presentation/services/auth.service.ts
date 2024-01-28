@@ -28,7 +28,7 @@ export class AuthService {
 			});
 			if (!token) throw CustomError.internalServer('Error generating token');
 
-			return { user: userEntity, token: 'ABC' };
+			return { user: userEntity, token };
 		} catch (error) {
 			throw CustomError.internalServer(`${error}`);
 		}
