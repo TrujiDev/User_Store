@@ -1,4 +1,4 @@
-import { JwtAdapter, bcryptAdapter } from '../../config';
+import { JwtAdapter, bcryptAdapter, envs } from '../../config';
 import { UserModel } from '../../data';
 import {
 	CustomError,
@@ -6,9 +6,10 @@ import {
 	UserEntity,
 	LoginUserDto,
 } from '../../domain';
+import { EmailService } from './email.service';
 
 export class AuthService {
-	constructor() {}
+	constructor(private readonly emailService: EmailService) {}
 
 	public async registerUser(registerUserDto: RegisterUserDto) {
 		const existUser = await UserModel.findOne({ email: registerUserDto.email });
@@ -20,6 +21,8 @@ export class AuthService {
 			user.password = bcryptAdapter.hash(registerUserDto.password);
 
 			await user.save();
+
+			await this.sendEmailVerification(user.email);
 
 			const { password, ...userEntity } = UserEntity.fromObject(user);
 
@@ -49,5 +52,26 @@ export class AuthService {
 		if (!token) throw CustomError.internalServer('Error generating token');
 
 		return { user: userEntity, token };
+	}
+
+	private async sendEmailVerification(email: string) {
+		const token = await JwtAdapter.generateToken({ email });
+		if (!token) throw CustomError.internalServer('Error generating token');
+
+		const url = `${envs.WEBSERVICE_URL}/auth/validate-email/${token}`;
+		const html = `
+			<p>Click <a href="${url}">here</a> to validate your email</p>
+		`;
+
+		const mailOptions = {
+			to: email,
+			subject: 'Email validation',
+			htmlBody: html,
+		};
+
+		const isSent = await this.emailService.sendEmail(mailOptions);
+		if (!isSent) throw CustomError.internalServer('Error sending email');
+
+		return true;
 	}
 }
