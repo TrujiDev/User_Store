@@ -5,13 +5,13 @@ import { AuthService } from '../services/auth.service';
 export class AuthController {
 	constructor(public readonly authService: AuthService) {}
 
-	private handleError = (error: Error, res: Response) => {
+	private handleError = (error: unknown, res: Response) => {
 		if (error instanceof CustomError) {
 			return res.status(error.statusCode).json({ error: error.message });
 		}
 
 		console.log(`${error}`);
-		return res.status(500).json({ error: error.message });
+		return res.status(500).json({ error: 'Internal server error' });
 	};
 
 	loginUser = (req: Request, res: Response) => {
@@ -35,6 +35,11 @@ export class AuthController {
 	};
 
 	validateEmail = (req: Request, res: Response) => {
-		res.json({ message: 'validate-email' });
+		const { token } = req.params;
+
+		this.authService
+			.validateEmail(token)
+			.then(() => res.json('Email was validated properly'))
+			.catch(error => this.handleError(error, res));
 	};
 }
