@@ -11,12 +11,12 @@ export class CategoryRoutes {
 
 		const categoryController = new CategoryController(categoryService);
 
-		router.post('/', categoryController.createCategory);
-		router.get(
+		router.post(
 			'/',
-			[AuthMiddleware.validateJwt],
-			categoryController.getCategories
+			[AuthMiddleware.validateJWT],
+			categoryController.createCategory
 		);
+		router.get('/', categoryController.getCategories);
 
 		return router;
 	}
