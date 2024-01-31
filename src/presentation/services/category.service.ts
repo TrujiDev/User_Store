@@ -2,6 +2,7 @@ import { CategoryModel } from '../../data';
 import { CreateCategoryDto, CustomError, UserEntity } from '../../domain';
 
 export class CategoryService {
+	// DI
 	constructor() {}
 
 	async createCategory(createCategoryDto: CreateCategoryDto, user: UserEntity) {
@@ -13,7 +14,7 @@ export class CategoryService {
 		try {
 			const category = new CategoryModel({
 				...createCategoryDto,
-				createdBy: user.id,
+				user: user.id,
 			});
 
 			await category.save();
@@ -24,7 +25,7 @@ export class CategoryService {
 				available: category.available,
 			};
 		} catch (error) {
-			throw CustomError.internalServer(`${error}`)
+			throw CustomError.internalServer(`${error}`);
 		}
 	}
 }
