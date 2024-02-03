@@ -16,8 +16,8 @@ export class CreateProductDto {
 		if (!name) return ['Missing name'];
 		if (!user) return ['Missing user'];
 		if (!category) return ['Missing category'];
-		if (Validators.isMongoId(user)) return ['Invalid user id'];
-		if (Validators.isMongoId(category)) return ['Invalid category id'];
+		if (!Validators.isMongoId(user)) return ['Invalid User ID'];
+		if (!Validators.isMongoId(category)) return ['Invalid User ID'];
 
 		return [
 			undefined,
