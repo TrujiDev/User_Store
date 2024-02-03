@@ -16,6 +16,7 @@ const productSchema = new mongoose.Schema({
 	},
 	description: {
 		type: String,
+		default: '',
 	},
 	user: {
 		type: Schema.Types.ObjectId,
