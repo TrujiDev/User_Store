@@ -14,6 +14,8 @@ export class FileUploadController {
 	};
 
 	uploadFile = (req: Request, res: Response) => {
+		console.log({ file: req.files });
+
 		res.send('File uploaded successfully');
 	};
 
