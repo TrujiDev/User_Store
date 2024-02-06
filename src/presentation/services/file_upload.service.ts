@@ -1,17 +1,33 @@
+import { UploadedFile } from 'express-fileupload';
+import path from 'path';
+import fs from 'fs';
+
 export class FileUploadService {
 	constructor() {}
 
 	private checkFolder(folderPath: string) {
-		throw new Error('Method not implemented.');
+		if (!fs.existsSync(folderPath)) {
+			fs.mkdirSync(folderPath);
+		}
 	}
 
-	public uploadSingle(
-		file: any,
+	async uploadSingle(
+		file: UploadedFile,
 		folder: string = 'uploads',
 		validExtensions: string[] = ['jpg', 'png', 'jpeg', 'gif']
-	) {}
+	) {
+		try {
+			const fileExtension = file.mimetype.split('/').at(1);
+			const destination = path.resolve(__dirname, '../../../', folder);
+			this.checkFolder(destination);
 
-	public uploadMultiple(
+			file.mv(destination + `/mi_imagen.${fileExtension}`);
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	async uploadMultiple(
 		file: any[],
 		folder: string = 'uploads',
 		validExtensions: string[] = ['jpg', 'png', 'jpeg', 'gif']
