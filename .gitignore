@@ -4,5 +4,6 @@
 /postgres
 node_modules/
 dist/
+/uploads/
 build/
 coverage/
